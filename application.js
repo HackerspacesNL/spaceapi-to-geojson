@@ -47,11 +47,24 @@ function spaceinfoToGeojsonItem(spaceinfo) {
 			msg = spaceinfo.state.message;
 		}
 		
-		if (typeof spaceinfo.state.open !== undefined && spaceinfo.state.open) {
-			if (spaceinfo.state.open) {
-				symbol = "hs-open";
+		if (typeof spaceinfo.state.open !== undefined) {
+			//console.log(spaceinfo.state.open);
+			if (typeof spaceinfo.state.open === 'boolean') {
+				if (spaceinfo.state.open) {
+					symbol = "hs-open";
+				} else {
+					symbol = "hs-closed";
+				}
+			} else if (typeof spaceinfo.state.open === 'string') {
+				if (spaceinfo.state.open=="open") {
+					symbol = "hs-open";
+				} else if (spaceinfo.state.open=="closed") {
+					symbol = "hs-closed";
+				} else {
+					console.log("Unknown space state string: "+spaceinfo.state.open);
+				}
 			} else {
-				symbol = "hs-closed";
+				console.log("Unknown space state type: ",typeof spaceinfo.state.open, spaceinfo.state.open);
 			}
 		}
 	}
@@ -83,7 +96,7 @@ rp({uri: directory_url, json: true}).then((directory) => {
 		promises.push(rp({uri: hs_url, json: true, timeout: 2000}).then((spaceinfo) => {
 			geojson_items.push(spaceinfoToGeojsonItem(spaceinfo));
 		}).catch((error) => {
-			console.log(error);
+			//console.log(error);
 		}));
 	}
 	
